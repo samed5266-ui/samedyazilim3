@@ -1,7 +1,6 @@
 name: Samed Panel APK Builder
 on: [push, workflow_dispatch]
 
-# Node.js 24 uyarısını gidermek için çevre değişkeni ekliyoruz
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
@@ -18,30 +17,29 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Proje Yapisini Kur
+      - name: Proje Yapisini Hazirla
         run: |
-          # Gerekli klasörleri oluştur
+          # Klasör hiyerarşisini oluştur
           mkdir -p app/src/main/java/com/samed/panel
           mkdir -p app/src/main/res/layout
           
-          # Dosyaları isim hatası olsa bile bul ve taşı
-          find . -maxdepth 1 -iname "mainactivity.java" -exec cp {} app/src/main/java/com/samed/panel/MainActivity.java \;
-          find . -maxdepth 1 -iname "bootreceiver.java" -exec cp {} app/src/main/java/com/samed/panel/BootReceiver.java \;
-          find . -maxdepth 1 -iname "androidmanifest.xml" -exec cp {} app/src/main/AndroidManifest.xml \;
-          find . -maxdepth 1 -iname "activity_main.xml" -exec cp {} app/src/main/res/layout/activity_main.xml \;
+          # Dosyaları doğru yerlerine kopyala (İsimleri düzelterek)
+          cp mainactivity.java app/src/main/java/com/samed/panel/MainActivity.java || cp MainActivity.java app/src/main/java/com/samed/panel/MainActivity.java
+          cp bootreceiver.java app/src/main/java/com/samed/panel/BootReceiver.java || cp BootReceiver.java app/src/main/java/com/samed/panel/BootReceiver.java
+          cp androidmanifest.xml app/src/main/AndroidManifest.xml || cp AndroidManifest.xml app/src/main/AndroidManifest.xml
+          cp activity_main.xml app/src/main/res/layout/activity_main.xml
+
+          # Gradle dosyalarını ana dizinden app dizinine taşı (Eğer ana dizindeyse)
+          cp build.gradle app/build.gradle
           
-          # Wrapper ve build dosyalarını ayarla
-          gradle wrapper --gradle-version 8.5
-          echo "android.useAndroidX=true" > gradle.properties
-          echo "android.enableJetifier=true" >> gradle.properties
+          # İzinleri ayarla
+          chmod +x gradlew
 
       - name: APK Derle
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleRelease
+        run: ./gradlew assembleRelease
 
-      - name: APK Dosyasini Yukle
+      - name: APK Yukle
         uses: actions/upload-artifact@v4
         with:
-          name: Samed-Panel-Release-APK
+          name: Samed-Panel-APK
           path: app/build/outputs/apk/release/*.apk
