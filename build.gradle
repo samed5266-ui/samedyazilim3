@@ -1,11 +1,11 @@
-// Top-level build file
+// Top-level build file: Defines repositories and dependencies for all modules
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // Android Gradle Plugin sürümü (Sistemle uyumlu en stabil sürüm)
+        // Updated to a stable version compatible with Java 17 and Gradle 8.x
         classpath 'com.android.tools.build:gradle:8.2.2'
     }
 }
@@ -17,6 +17,7 @@ allprojects {
     }
 }
 
+// Helper task to clean the build directory
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
