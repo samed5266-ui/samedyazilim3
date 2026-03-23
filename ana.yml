@@ -14,36 +14,30 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Proje Yapisini ve Motoru Sifirdan Kur
+      - name: Proje Yapisini Kur
         run: |
-          # 1. Klasörleri oluştur
+          # Gerekli klasörleri oluştur
           mkdir -p app/src/main/java/com/samed/panel
           mkdir -p app/src/main/res/layout
-
-          # 2. Ana dizindeki dosyalarını yerlerine taşı
-          [ -f MainActivity.java ] && mv MainActivity.java app/src/main/java/com/samed/panel/
-          [ -f mainactivity.java ] && mv mainactivity.java app/src/main/java/com/samed/panel/MainActivity.java
-          [ -f BootReceiver.java ] && mv BootReceiver.java app/src/main/java/com/samed/panel/
-          [ -f bootreceiver.java ] && mv bootreceiver.java app/src/main/java/com/samed/panel/BootReceiver.java
-          [ -f activity_main.xml ] && mv activity_main.xml app/src/main/res/layout/
-          [ -f androidmanifest.xml ] && mv androidmanifest.xml app/src/main/AndroidManifest.xml
-          [ -f AndroidManifest.xml ] && mv AndroidManifest.xml app/src/main/AndroidManifest.xml
-
-          # 3. Eksik olan motoru (Wrapper) SIFIRDAN kur
+          
+          # Dosyaları isim hatası olsa bile bul ve taşı
+          find . -maxdepth 1 -iname "mainactivity.java" -exec cp {} app/src/main/java/com/samed/panel/MainActivity.java \;
+          find . -maxdepth 1 -iname "bootreceiver.java" -exec cp {} app/src/main/java/com/samed/panel/BootReceiver.java \;
+          find . -maxdepth 1 -iname "androidmanifest.xml" -exec cp {} app/src/main/AndroidManifest.xml \;
+          find . -maxdepth 1 -iname "activity_main.xml" -exec cp {} app/src/main/res/layout/activity_main.xml \;
+          
+          # Wrapper ve build dosyalarını ayarla
           gradle wrapper --gradle-version 8.5
-
-          # 4. Ayarları AndroidX için zorla güncelle
           echo "android.useAndroidX=true" > gradle.properties
           echo "android.enableJetifier=true" >> gradle.properties
 
       - name: APK Derle
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease
 
-      - name: APK'yi Yukle
-        if: success()
+      - name: APK Dosyasini Yukle
         uses: actions/upload-artifact@v4
         with:
-          name: Samed-Panel-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Samed-Panel-Release-APK
+          path: app/build/outputs/apk/release/*.apk
