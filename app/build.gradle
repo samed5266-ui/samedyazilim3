@@ -1,4 +1,6 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
     namespace 'com.samed.panel'
@@ -7,16 +9,16 @@ android {
     defaultConfig {
         applicationId "com.samed.panel"
         
-        // Android 5.0 ve üzeri tüm TV'lerde çalışması için
-        minSdkVersion 21 
+        // Minimum SDK 21 ensures compatibility back to Android 5.0 (Lollipop)
+        minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        // TCL TV'LERDEKİ "AYRIŞTIRMA HATASINI" ÇÖZEN KRİTİK AYAR
-        // TV'ler genelde 32-bit işlemci kullanır, bu kod her iki mimariyi de APK'ya ekler.
+        // CRITICAL: Solves "App not installed" or "Parsing error" on TCL/Android TVs
+        // Ensures the APK includes both 32-bit and 64-bit architectures
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
@@ -27,17 +29,32 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+        }
     }
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
+    buildFeatures {
+        viewBinding false // Set to true if you decide to use ViewBinding later
+    }
 }
 
 dependencies {
+    // UI & Layout Components
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    
+    // Core Utilities for WebView and Permissions
     implementation 'androidx.core:core:1.12.0'
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
