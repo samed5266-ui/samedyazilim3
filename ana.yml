@@ -1,6 +1,10 @@
 name: Samed Panel APK Builder
 on: [push, workflow_dispatch]
 
+# Node.js 24 uyarısını gidermek için çevre değişkeni ekliyoruz
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   build:
     runs-on: ubuntu-latest
