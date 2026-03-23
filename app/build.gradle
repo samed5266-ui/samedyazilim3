@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    // Uygulama kimliği ve paket adı
     namespace 'com.samed.panel'
     compileSdk 34
 
     defaultConfig {
         applicationId "com.samed.panel"
         
-        // Android 5.0 ve üzeri tüm TV'lerde çalışması için 21 yapıldı
+        // Android 5.0 ve üzeri tüm TV'lerde çalışması için
         minSdkVersion 21 
         targetSdkVersion 34
         versionCode 1
@@ -16,9 +15,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        // TCL TV'LERDEKİ "AYRIŞTIRMA HATASINI" ÇÖZEN KRİTİK AYAR:
-        // TV'lerin çoğu 32-bit (v7a) işlemci kullanır. 
-        // Bu filtre ile APK'nın içine hem 32 hem 64 bit kütüphanelerini koyuyoruz.
+        // TCL TV'LERDEKİ "AYRIŞTIRMA HATASINI" ÇÖZEN KRİTİK AYAR
+        // TV'ler genelde 32-bit işlemci kullanır, bu kod her iki mimariyi de APK'ya ekler.
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
@@ -26,7 +24,6 @@ android {
 
     buildTypes {
         release {
-            // TV uygulamalarında performans için minify şimdilik kapalı
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -39,11 +36,8 @@ android {
 }
 
 dependencies {
-    // Temalarda ve arayüzde hata çıkmaması için gerekli kütüphaneler
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    
-    // WebView ve temel sistem bileşenleri
     implementation 'androidx.core:core:1.12.0'
 }
